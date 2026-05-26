@@ -16,7 +16,7 @@ jobs:
      ECR_REPOSITORY_URI: ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.us-east-1.amazonaws.com/uwwcensus-nonprod
      ECR_REPOSITORY_DATE_TAG: ${{ github.run_id }}
      ECS_CONTAINER_NAME: uwwnonprod-census-container
-     ECS_TASK_DEFINITION: uwwnonprod-census-taskdef
+     ECS_TASK_DEFINITION: uwwnonprod-census-tasdef
      ECS_SERVICE_NAME: uwwnonprod-census-service
      ECS_CLUSTER_NAME: uwwnonprod-census-ecs
  
