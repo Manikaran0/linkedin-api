@@ -1,0 +1,75 @@
+name: Deploy LinkedIn API - NonProd
+ 
+on:
+  push:
+    branches:
+      - non-prod
+ 
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    env:
+     AWS_REGION: us-east-1
+     IMAGE_REPO_NAME: uwwcensus-nonprod
+     IMAGE_TAG: Latest  
+     ECR_REPOSITORY_URI: ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.us-east-1.amazonaws.com/uwwcensus-nonprod
+     ECR_REPOSITORY_DATE_TAG: $(date '+%F_%H-%M') 
+     ECS_CONTAINER_NAME: uwwnonprod-census-container
+     ECS_TASK_DEFINITION: uwwnonprod-census-taskdef
+     ECS_SERVICE_NAME: uwwnonprod-census-service
+     ECS_CLUSTER_NAME: uwwnonprod-census-ecs
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+ 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+ 
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+ 
+      - name: Build Docker image
+        run: docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+ 
+      - name: Tag and push image
+        id: build-image
+        run: |
+          docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $ECR_REPOSITORY_URI:$ECR_REPOSITORY_DATE_TAG
+          docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $ECR_REPOSITORY_URI:$IMAGE_TAG
+          docker push $ECR_REPOSITORY_URI:$ECR_REPOSITORY_DATE_TAG
+          docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+          echo "image=$ECR_REPOSITORY_URI:$IMAGE_TAG" >> $GITHUB_OUTPUT
+ 
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition \
+          --task-definition $ECS_TASK_DEFINITION \
+          --query taskDefinition > task-definition.json
+ 
+      - name: Remove unsupported fields from task definition
+        run: |
+          jq 'del(.enableFaultInjection)' task-definition.json > task-definition-clean.json
+          mv task-definition-clean.json task-definition.json
+ 
+      - name: Render new task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.ECS_CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+ 
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_NAME }}
+          cluster: ${{ env.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true
+ 
