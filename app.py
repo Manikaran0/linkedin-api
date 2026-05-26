@@ -5,7 +5,7 @@ app = Flask(__name__)
  
 sns = boto3.client("sns", region_name="us-east-1")
  
-TOPIC_ARN = "arn:aws:sns:us-east-1:935322646857:linkedin-nonprod-topic"
+TOPIC_ARN = "arn:aws:sns:us-east-1:925729917602:uwwnonprod-sns-topic"
  
 @app.route("/")
 def home():
