@@ -8,13 +8,13 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     env:
      AWS_REGION: us-east-1
      IMAGE_REPO_NAME: uwwcensus-nonprod
      IMAGE_TAG: Latest  
      ECR_REPOSITORY_URI: ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.us-east-1.amazonaws.com/uwwcensus-nonprod
-     ECR_REPOSITORY_DATE_TAG: $(date '+%F_%H-%M') 
+     ECR_REPOSITORY_DATE_TAG: ${{ github.run_id }}
      ECS_CONTAINER_NAME: uwwnonprod-census-container
      ECS_TASK_DEFINITION: uwwnonprod-census-taskdef
      ECS_SERVICE_NAME: uwwnonprod-census-service
