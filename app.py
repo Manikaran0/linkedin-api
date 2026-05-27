@@ -16,7 +16,7 @@ def home():
     #     Subject="ECS Notification"
     # )
  
-    return "Hello MK from LinkedIn API to ECS NonProd!!"
+    return "Hello Mani from LinkedIn API to ECS NonProd!!"
  
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5005)
