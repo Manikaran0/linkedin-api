@@ -10,11 +10,11 @@ TOPIC_ARN = "arn:aws:sns:us-east-1:925729917602:uwwnonprod-sns-topic"
 @app.route("/")
 def home():
     # Send SNS email
-    sns.publish(
-        TopicArn=TOPIC_ARN,
-        Message="LinkedIn API was triggered!",
-        Subject="ECS Notification"
-    )
+    # sns.publish(
+    #     TopicArn=TOPIC_ARN,
+    #     Message="LinkedIn API was triggered!",
+    #     Subject="ECS Notification"
+    # )
  
     return "Hello MK from LinkedIn API to ECS NonProd!!"
  
