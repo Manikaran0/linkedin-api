@@ -17,8 +17,8 @@ jobs:
      ECR_REPOSITORY_DATE_TAG: ${{ github.run_id }}
      ECS_CONTAINER_NAME: uwwnonprod-abc-container
      ECS_TASK_DEFINITION: uwwnonprod-abc-tasakdef
-     ECS_SERVICE_NAME: uwwnonprod-abc-service
-     ECS_CLUSTER_NAME: uwwnonprod-abc-ecs
+     ECS_SERVICE_NAME: uwwnonprod-abc-tasakdef-service-t92n9m2d
+     ECS_CLUSTER_NAME: uwwnonprod-abc-ecs   
  
     steps:
       - name: Checkout code
