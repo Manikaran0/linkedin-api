@@ -16,7 +16,7 @@ def home():
     #     Subject="ECS Notification"
     # )
  
-    return "A message from Mani"
+    return "A message from Manikaran"
  
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5005)
